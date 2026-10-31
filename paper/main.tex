@@ -37,15 +37,16 @@ structures by an inscribed-sphere (\textsc{hole}-type) analysis, and a
 two-exponent superquadric shape family, whose volume law we checked against
 Monte-Carlo integration, is then optimized under the passage constraints. In
 every case the best transporter is a slender nanorod rather than a sphere: as
-wide as the constriction permits, and as long as the channel curvature allows
-through a moving-sofa navigability limit. The corresponding cargo gains range
-from $9.3\times$ to $19.4\times$ the largest passing sphere, are reproduced
-independently by sliding the particle through the atomic coordinates and testing
-for clashes, and scale with the channel length-to-radius ratio, with tortuosity
-acting as a secondary brake. Brownian-dynamics simulations on the atomistically
-derived free-energy profiles show that these high-capacity rods still
-translocate, incurring no barrier penalty relative to a sphere, whereas oblate
-discs jam in circular pores. The gain is a dimensionless ratio and therefore
+wide as the constriction permits, and as long as the channel itself. The
+corresponding cargo gains range from $6.6\times$ to $13.8\times$ the largest
+passing sphere and scale with the channel length-to-radius ratio. Collision
+detection against the atomic coordinates confirms that a rod spanning the full
+channel length fits each lumen and can slide straight through it; in none of the
+four pores does curvature shorten the rod, so tortuosity, which would throttle
+elongation in a genuinely bent channel, is not the binding constraint here.
+Brownian-dynamics simulations on the atomistically derived free-energy profiles
+show that oblate discs jam in circular pores; the sphere and rod barriers lie
+within the resolution of the present sampling. The gain is a dimensionless ratio and therefore
 independent of absolute size, so the same rule extends to the larger barriers
 that $10$--$\SI{100}{nm}$ carriers meet in practice. A parameterized survey of
 the nuclear pore complex, collagen and mucus meshes, fenestrae and tumour
@@ -271,7 +272,8 @@ near $\SI{1}{nm}$.}
 \emph{de novo} from atomic coordinates, and the resulting validated capacity
 gain. $d$, minimum pore diameter; $L$, lumen length; $\tau$, centreline
 tortuosity; $\epsilon_{\rm ap}$, aperture anisotropy; $V_{\rm sph}$, volume of
-the largest passing sphere; $a/R_{\rm bot}$, validated optimal aspect ratio;
+the largest passing sphere; $a/R_{\rm bot}$, validated optimal aspect ratio
+(half-length capped at $L/2$, which is reached in all four channels);
 $G$, transportable-volume gain.}
 \label{tab:channels}
 \begin{ruledtabular}
@@ -279,10 +281,10 @@ $G$, transportable-volume gain.}
 Channel & PDB & atoms & $d$ (nm) & $L$ (nm) & $\tau$ & $\epsilon_{\rm ap}$
  & $V_{\rm sph}$ (nm$^3$) & $a/R_{\rm bot}$ & $G$ \\
 \colrule
-$\alpha$-Hemolysin & 7AHL & 16389 & 1.05 & 10.0 & 1.07 & 2.40 & 0.61 & 13.3 & $\mathbf{19.4}$ \\
-VDAC1              & 3EMN & 2189  & 1.04 & 5.1  & 1.56 & 1.77 & 0.60 & 6.9  & $\mathbf{10.0}$ \\
-Connexin-26        & 2ZW3 & 9834  & 1.00 & 7.8  & 1.04 & 1.78 & 0.52 & 10.9 & $\mathbf{15.9}$ \\
-MspA               & 1UUN & 11032 & 1.06 & 4.8  & 1.05 & 1.78 & 0.62 & 6.4  & $\mathbf{9.3}$ \\
+$\alpha$-Hemolysin & 7AHL & 16389 & 1.05 & 10.0 & 1.07 & 2.40 & 0.61 & 9.5 & $\mathbf{13.8}$ \\
+VDAC1              & 3EMN & 2189  & 1.04 & 5.1  & 1.56 & 1.77 & 0.60 & 4.9 & $\mathbf{7.2}$ \\
+Connexin-26        & 2ZW3 & 9834  & 1.00 & 7.8  & 1.04 & 1.78 & 0.52 & 7.8 & $\mathbf{11.4}$ \\
+MspA               & 1UUN & 11032 & 1.06 & 4.8  & 1.05 & 1.78 & 0.62 & 4.5 & $\mathbf{6.6}$ \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -303,9 +305,9 @@ there.
 
 The capacity gains are large and, importantly, \emph{not} universal constants but
 quantities that track each channel's geometry. The atomistically validated gains
-(Sec.~\ref{sec:valid}, Fig.~\ref{fig:gains}) are $19.4\times$
-($\alpha$-hemolysin), $15.9\times$ (connexin-26), $10.0\times$ (VDAC1) and
-$9.3\times$ (MspA). To leading order a cylinder of radius $R_{\rm bot}$ and length
+(Sec.~\ref{sec:valid}, Fig.~\ref{fig:gains}) are $13.8\times$
+($\alpha$-hemolysin), $11.4\times$ (connexin-26), $7.2\times$ (VDAC1) and
+$6.6\times$ (MspA). To leading order a cylinder of radius $R_{\rm bot}$ and length
 $2a$ improves on the sphere by $G\simeq\tfrac32\,(a/R_{\rm bot})$, so the gain is
 governed by the achievable aspect ratio, which in turn is set by the channel
 length-to-radius ratio $L/2R_{\rm bot}$ (Fig.~\ref{fig:gains}c). The longest,
@@ -321,7 +323,7 @@ result.
 (a) The two-exponent superquadric family spans spheres, cylinders, discs and
 boxes as $(\epsilon_1,\epsilon_2)$ vary.
 (b) For all four channels the optimum is a round-cross-section nanorod
-(coloured) carrying $9$--$19\times$ the volume of the largest passing sphere
+(coloured) carrying $7$--$14\times$ the volume of the largest passing sphere
 (grey).}
 \label{fig:morpho}
 \end{figure*}
@@ -349,15 +351,22 @@ using no part of the volume law or the aperture constraint
 increasing radius placed on the pore axis at the constriction loses clearance
 exactly at $R_{\rm bot}$ (Fig.~\ref{fig:valid}a), confirming that the extracted
 bottleneck is the binding transverse constraint. Second, a rigid cylinder of
-fixed sub-constriction radius and growing half-length, swept along the lumen over
-a search of position and orientation, remains collision-free up to a
-channel-specific navigable length $a_{\rm nav}$ (Fig.~\ref{fig:valid}b). The
-resulting validated aspect ratios and gains (Table~\ref{tab:channels}) define the
-markers used throughout and confirm the analytic optima; the throttling of
-$a_{\rm nav}$ in the tortuous VDAC1 lumen, relative to straight channels of
-similar length, is recovered directly from the atoms. A cross-sectional view
-(Fig.~\ref{fig:valid}c) confirms the optimal nanorod sits collision-free within
-the lumen.
+fixed sub-constriction radius ($0.92\,R_{\rm bot}$) and growing half-length is
+placed in the lumen over a search of position and orientation. Its half-length
+is capped at the channel half-length $L/2$, the same cap as in constraint (ii),
+and the rod must stay within the channel span; beyond the channel ends the rod
+would sit in bulk solvent, where a clash test cannot limit its length. In all
+four channels the cylinder remains collision-free up to this cap, so the
+navigable length is $a_{\rm nav}=L/2$ (Fig.~\ref{fig:valid}b) and the validated
+aspect ratios and gains (Table~\ref{tab:channels}) coincide with the
+length-capped analytic optima. Sliding the rod rigidly along its own axis
+through the whole protein is also clash-free in every channel (minimum
+clearance $0.02$--$\SI{0.04}{nm}$). The test therefore confirms that the
+length-capped optimum fits and can pass, but it does not resolve a curvature
+limit: even in the tortuous VDAC1 lumen the rod reaches the full channel length,
+and VDAC1's smaller gain reflects its short length rather than its tortuosity.
+A cross-sectional view (Fig.~\ref{fig:valid}c) confirms the optimal nanorod sits
+collision-free within the lumen.
 
 \begin{figure*}[t]
 \centering
@@ -365,8 +374,9 @@ the lumen.
 \caption{\textbf{Atomistic collision validation.}
 (a) Probe clearance versus radius: all channels lose clearance at the extracted
 $R_{\rm bot}$ (transverse limit).
-(b) Clearance versus rod half-length; the zero-crossing (markers) is the
-atomistically measured navigable length $a_{\rm nav}$.
+(b) Clearance versus rod half-length up to the channel half-length $L/2$;
+clearance stays positive throughout, so the navigable length (markers) is
+$a_{\rm nav}=L/2$ in every channel.
 (c) Cross-section confirming the optimal nanorod (red) fits the connexin-26 lumen
 without clashes.}
 \label{fig:valid}
@@ -380,11 +390,14 @@ The elongation that powers these gains is ultimately limited by navigability.
 Equation~\eqref{eq:ladder} shows that curvature throttles the achievable aspect
 ratio (Fig.~\ref{fig:nav}b): the idealized smooth-bend bound falls steeply with
 tortuosity, while the atomistically measured navigable lengths
-(Sec.~\ref{sec:valid}) lie above it because the small residual tortuosity of real
-``straight'' channels ($\tau\!\approx\!1.05$) is wall roughness rather than a
-coherent bend. The genuinely tortuous channel, VDAC1, is the outlier whose
-achievable aspect ratio---and hence gain---is visibly suppressed relative to
-straight channels of comparable length.
+(Sec.~\ref{sec:valid}) lie above it and reach the channel-length cap in all four
+pores. For the nearly straight channels ($\tau\!\approx\!1.05$) this is
+expected, since their residual tortuosity is wall roughness rather than a
+coherent bend. Even VDAC1 ($\tau=1.56$) admits a straight rod spanning its full
+length at the sub-constriction radius tested, so the circular-arc model
+overstates its bend. Curvature throttling is therefore a prediction for
+genuinely bent channels, captured by the design map below, rather than an effect
+observed in these four structures.
 
 These dependencies collapse onto a compact \emph{design map}
 (Fig.~\ref{fig:nav}c): the capacity gain as a function of the two levers a
@@ -402,9 +415,9 @@ mesoscale channels would lie.
 \caption{\textbf{Navigability physics and the design map.}
 (a) The moving-sofa/ladder bound: the longest rigid segment in a bent tube,
 $a_{\max}=2\sqrt{\rho\Delta}$.
-(b) Tortuosity throttles the achievable aspect ratio; the curve is the idealized
+(b) In a bent tube tortuosity throttles the achievable aspect ratio; the curve is the idealized
 smooth-bend bound (a lower bound), points are atomistic measurements on the real
-lumens.
+lumens, all of which reach the channel-length cap $L/2R_{\rm bot}$.
 (c) Design map: transportable-volume gain versus aspect ratio and aperture
 anisotropy, with the four channels overlaid.}
 \label{fig:nav}
@@ -423,21 +436,21 @@ integrated the overdamped Langevin equation on $G(z)$ with absorbing mouths and
 an external drive $f$, yielding translocation probabilities and mean
 first-passage times (Fig.~\ref{fig:bd}).
 
-The simulations make three points. First, oblate \emph{discs are sterically
-excluded} from all four circular pores: their PMF barrier saturates the sampling
-limit and their translocation probability is essentially zero
-(Fig.~\ref{fig:bd}a,b). Discs therefore help only at slit-like or short, wide
-apertures, not at circular pores, a conclusion that returns at the mesoscale
-(Sec.~\ref{sec:meso}). Second, the optimal nanorod still translocates: it crosses
-with finite probability under modest drive (Fig.~\ref{fig:bd}c), and its entropic
-barrier is comparable to, or lower than, that of the maximal sphere
-(Fig.~\ref{fig:bd}b,d). The reason is intuitive once stated: the rod sits below
-the constriction in its transverse dimension, so it threads at least as easily as
-a sphere, while its length is what supplies the extra volume. Third, putting these
-together, the move from sphere to rod buys an order of magnitude in cargo while
-leaving the translocation barrier essentially unchanged (Fig.~\ref{fig:bd}d). The
-capacity advantage, in other words, does not come at the expense of getting
-through.
+The robust result is that oblate \emph{discs are sterically excluded} from all
+four circular pores: their PMF barrier saturates the sampling limit
+($\approx 13.8\,k_BT$, no collision-free sample) and their translocation
+probability is essentially zero (Fig.~\ref{fig:bd}a,b). Discs therefore help only
+at slit-like or short, wide apertures, not at circular pores, a conclusion that
+returns at the mesoscale (Sec.~\ref{sec:meso}). The comparison between the
+sphere and the optimal rod is not resolved by the present sampling. With
+$588$ configurations per axial slice, a barrier of $\approx 6\,k_BT$ corresponds
+to a single collision-free sample and $\approx 13.8\,k_BT$ to none, and the
+sphere and rod barriers fall in this range (Fig.~\ref{fig:bd}b,d); changing only
+the random-number stream moves individual barriers between these two levels. The
+rod sits below the constriction in its transverse dimension, so geometrically it
+threads the constriction as a sphere does (Sec.~\ref{sec:valid}), but a
+quantitative statement about its translocation barrier relative to the sphere
+requires substantially denser sampling and is left to future work.
 
 \begin{figure*}[t]
 \centering
@@ -447,7 +460,9 @@ through.
 (b) Peak translocation barrier per channel and shape; discs are blocked.
 (c) Driven translocation probability versus applied force.
 (d) Capacity gain versus translocation barrier: the sphere$\to$rod transition
-(arrows) raises capacity by $\sim\!10$--$19\times$ with no barrier penalty.}
+(arrows) raises capacity by $\sim\!7$--$14\times$; sphere and rod barriers are
+within the Monte-Carlo resolution (one collision-free sample per slice
+$\approx 6\,k_BT$, none $\approx 13.8\,k_BT$).}
 \label{fig:bd}
 \end{figure*}
 
@@ -516,13 +531,14 @@ Tumour gaps (EPR)          & 300  & 400 & 1.20 & 1.4 & 1.7 \\
 Our central finding is that the rigid shape maximizing transportable cargo
 through a molecular channel is not a sphere but a slender, round-cross-section
 nanorod whose transverse size is set at the constriction and whose length is
-bounded by a moving-sofa navigability limit. Across four canonical nanopores this
-yields collision-validated capacity gains of an order of magnitude, governed by
-the channel length-to-radius ratio and modulated by tortuosity. The optimum is
-dynamically accessible---the rod translocates with no entropic-barrier penalty
-relative to the maximal sphere---and the principle, being scale-invariant,
-extends to the mesoscale barriers that limit drug delivery, where it predicts
-rods for long channels and discs for short, wide windows.
+bounded by the channel length (and, in a genuinely bent channel, by the
+moving-sofa navigability limit). Across four canonical nanopores this yields
+collision-validated capacity gains of $6.6$--$13.8\times$, governed by the
+channel length-to-radius ratio; tortuosity did not limit the rod in any of the
+four structures. The rod also slides straight through each channel without
+clashes, and the principle, being scale-invariant, extends to the mesoscale
+barriers that limit drug delivery, where it predicts rods for long channels and
+discs for short, wide windows.
 
 These results rationalize and unify a body of experimental observations.
 High-aspect-ratio carriers---filomicelles, nanorods and worm-like
@@ -589,9 +605,12 @@ against $3\times10^6$-sample Monte-Carlo integration.
 \paragraph{Atomistic validation.} The optimal particle's surface was discretized
 and tested for overlap against all channel atoms (KD-tree nearest-atom queries)
 as it was (i) grown radially at the bottleneck (transverse limit) and (ii)
-elongated and swept along the lumen over a search of position and orientation
-(navigable length). The largest collision-free configuration defines the
-validated optimum.
+elongated along the lumen over a search of position and orientation
+(navigable length), with the half-length capped at $L/2$ and the rod kept within
+the channel span. For the length test the clearance between the flat-ended
+cylinder and every atom sphere is computed exactly. The largest collision-free
+configuration defines the validated optimum. A straight-through check tests the
+infinite cylinder swept by sliding the rod along its own axis against all atoms.
 
 \paragraph{Brownian dynamics.} The entropic PMF $G(z)=-k_BT\ln\Omega(z)$ was
 estimated from the collision-free fraction $\Omega(z)$ of sampled rigid
@@ -607,9 +626,10 @@ code and derived data are available (see Data Availability).
 
 We have posed nanoparticle transport through a molecular channel as a
 three-dimensional moving-sofa problem and solved it on real, atomistically
-measured geometry. The optimal rigid carrier turns out to be a
-navigability-limited nanorod. It holds an order of magnitude more cargo than the
-largest sphere that fits, yet pays no penalty in translocation barrier. The same
+measured geometry. The optimal rigid carrier turns out to be a channel-length
+nanorod. It holds roughly $7$ to $14$ times more cargo than the largest sphere
+that fits, and it slides straight through each of the four channels without
+clashes. The same
 argument is scale-invariant by construction, so it applies equally to
 sub-nanometre porins and to micron-scale tissue gaps; the shape that wins simply
 shifts from a rod in long channels to a disc in short, wide windows. What began

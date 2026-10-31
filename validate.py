@@ -13,7 +13,23 @@ uses the analytic volume formula or aperture constraint):
     lumen axis. The longest collision-free half-length a_nav is the largest
     straight rigid segment the real lumen admits -- the data-measured analogue
     of the ladder-around-a-corner bound. Straight channels admit long rods;
-    tortuous ones cut a_nav down, exactly as the curvature bound predicts.
+    tortuous ones can cut a_nav down.
+
+    The half-length is capped at the channel half-length L/2, the same cap
+    used by optimize.py (a <= L/2) and by the sphere baseline, and the rod must
+    lie inside the channel span: a rod centred at axial offset s from the
+    channel midpoint may only grow to L/2 - |s|. Beyond the channel ends the
+    rod is in bulk solvent, where a clash test cannot constrain its length.
+    (Before 31 Oct 2026 the half-length grid ran to 0.7 L, so rods up to 1.4 L
+    long, half outside the protein, were counted as "validated". In all four
+    channels a_nav then equalled the last grid point: a grid artefact, not a
+    measured clash.) `length_capped_by_channel` records whether the channel
+    cap, rather than a clash, sets a_nav.
+
+(C) Straight-through translocation (diagnostic). The validated rod is slid
+    rigidly along its own axis from fully outside one mouth to fully outside
+    the other; the swept volume is an infinite cylinder around that line, and
+    its exact clearance against all atoms is recorded.
 """
 import json
 import numpy as np
@@ -56,6 +72,31 @@ def min_clearance(local, center, u, v, d, coords, radii, chunk=3000):
     return best
 
 
+def cylinder_clearance_exact(center, u, v, d, r, half_len, coords, radii):
+    """Exact minimum surface-to-surface clearance between a flat-ended
+    cylinder (radius r, half-length half_len, axis d through `center`) and the
+    atom spheres. Negative = overlap (also catches atoms fully enclosed by the
+    rod, which surface sampling cannot see)."""
+    rel = coords - center
+    t = np.abs(rel @ d)
+    rho = np.hypot(rel @ u, rel @ v)
+    in_r, in_t = rho <= r, t <= half_len
+    dist = np.where(in_t & ~in_r, rho - r,
+           np.where(~in_t & in_r, t - half_len,
+           np.where(~in_t & ~in_r, np.hypot(rho - r, t - half_len),
+                    -np.minimum(r - rho, half_len - t))))
+    return float((dist - radii).min())
+
+
+def line_clearance_exact(point, d, r, coords, radii):
+    """Clearance of the infinite cylinder of radius r around the line
+    point + t*d: the volume swept by a rod of radius r slid rigidly along its
+    own axis all the way through the protein."""
+    rel = coords - point
+    rho = np.linalg.norm(rel - np.outer(rel @ d, d), axis=1)
+    return float((rho - r - radii).min())
+
+
 def main():
     with open("results/channel_geometry.json") as f:
         geo = json.load(f)
@@ -74,6 +115,7 @@ def main():
         # restrict atoms to the channel neighbourhood for speed
         rel = coords - cmean
         perp = np.linalg.norm(rel - np.outer(rel @ d, d), axis=1)
+        coords_all, radii_all = coords, radii
         coords, radii = coords[perp < 16.0], radii[perp < 16.0]
 
         Rbot_A = g["bottleneck_R_nm"] * 10.0
@@ -87,32 +129,55 @@ def main():
             rad_clear.append(min_clearance(probe, bcen, u, v, d, coords, radii) / 10)
 
         # (B) navigable-length sweep (fixed radius, growing half-length).
-        # Search rod centre (along the centreline) and a small tilt about the
-        # best-fit axis, reporting the BEST achievable rigid-rod half-length
-        # (fair best case): a straight rod cannot follow a curved lumen, so this
-        # is the data-measured ladder-around-a-corner / moving-sofa length.
+        # Search rod centre (along the central part of the centreline) and a
+        # small tilt about the best-fit axis, reporting the BEST achievable
+        # rigid-rod half-length (fair best case): a straight rod cannot follow a
+        # curved lumen, so this is the data-measured ladder-around-a-corner /
+        # moving-sofa length. The half-length grid ends at the channel
+        # half-length L/2 (rod length <= channel length, as in optimize.py), and
+        # a rod centred at axial offset s from the channel midpoint may only grow
+        # to L/2 - |s| so that it stays inside the channel. Clearance is the
+        # exact cylinder-to-atom distance, so the search can be dense.
         r0 = 0.92 * Rbot_A
-        c_grid_A = np.linspace(2.0, max(g["length_nm"] * 10 * 0.7, 25.0), 26)
-        anchors = cline[np.linspace(0, len(cline) - 1, 5).astype(int)]
-        tilts = np.deg2rad(np.linspace(-12, 12, 5))
-        best_anav, best_curve = -1.0, None
-        for anc in anchors:
+        Lh_A = g["length_nm"] * 10 / 2.0
+        c_grid_A = np.linspace(2.0, Lh_A, 26)          # reported curve
+        c_fine_A = np.linspace(2.0, Lh_A, 241)         # a_nav search (~0.2 A)
+        s_cl = (cline - cmean) @ d
+        order = np.argsort(s_cl)
+        s_sorted, cl_sorted = s_cl[order], cline[order]
+        s_mid = 0.5 * (s_sorted[0] + s_sorted[-1])
+        span = s_sorted[-1] - s_sorted[0]
+        tilts = np.deg2rad(np.linspace(-12, 12, 9))
+        best = None   # (a_nav_A, clearance at a_nav, anchor, axis basis)
+        for frac in np.linspace(0.30, 0.70, 41):
+            s_a = s_sorted[0] + frac * span
+            anc = np.array([np.interp(s_a, s_sorted, cl_sorted[:, k])
+                            for k in range(3)])
+            c_lim = Lh_A - abs(s_a - s_mid)
             for tu in tilts:
                 for tv in tilts:
                     ax = d + np.tan(tu) * u + np.tan(tv) * v
                     uu, vv, dd = basis_from_axis(ax)
-                    lc = []
-                    for c in c_grid_A:
-                        rod = cylinder_surface(r0, c, n_z=46)
-                        lc.append(min_clearance(rod, anc, uu, vv, dd,
-                                                coords, radii) / 10)
-                    lc = np.array(lc)
-                    passing = c_grid_A[lc >= -0.02]
-                    anav = float(passing.max() / 10) if len(passing) else 0.0
-                    if anav > best_anav:
-                        best_anav, best_curve = anav, lc
-        a_nav_nm = best_anav
-        len_clear = best_curve
+                    anav, cl_at = 0.0, -np.inf
+                    for c in c_fine_A[c_fine_A <= c_lim + 1e-6]:
+                        cl = cylinder_clearance_exact(anc, uu, vv, dd, r0, c,
+                                                      coords, radii) / 10
+                        if cl < -0.02:
+                            break
+                        anav, cl_at = float(c), cl
+                    if best is None or (anav, cl_at) > best[:2]:
+                        best = (anav, cl_at, anc, (uu, vv, dd))
+        a_nav_nm = best[0] / 10
+        capped = bool(abs(best[0] - Lh_A) < 1e-6)
+        anc, (uu, vv, dd) = best[2], best[3]
+        len_clear = np.array([cylinder_clearance_exact(anc, uu, vv, dd, r0, c,
+                                                       coords, radii) / 10
+                              for c in c_grid_A])
+
+        # (C) straight-through translocation: the rod slid rigidly along its own
+        # axis from outside one mouth to outside the other sweeps an infinite
+        # cylinder around that line; test it against ALL atoms.
+        slide = line_clearance_exact(anc, dd, r0, coords_all, radii_all) / 10
 
         # volume gain achieved at the *validated* navigable length
         from optimize import sq_volume, sphere_baseline
@@ -125,6 +190,10 @@ def main():
             c_grid_nm=(c_grid_A / 10).tolist(),
             length_clearance_nm=len_clear.tolist(),
             a_nav_nm=a_nav_nm,
+            channel_half_length_nm=Lh_A / 10,
+            length_capped_by_channel=capped,
+            slide_line_clearance_nm=slide,
+            slides_straight_through=bool(slide >= -0.02),
             AR_nav=a_nav_nm / g["bottleneck_R_nm"],
             gain_nav=float(gain_nav),
             AR_cap_curvature=opt[pid]["AR_cap_curvature"],
@@ -133,7 +202,9 @@ def main():
         print(f"{pid:6s} a_nav={a_nav_nm:5.2f} nm  AR_nav={out[pid]['AR_nav']:4.1f}  "
               f"(len-cap AR={out[pid]['AR_cap_length']:.1f}, "
               f"curv-cap AR={out[pid]['AR_cap_curvature']:.1f})  "
-              f"gain_nav={gain_nav:.1f}x")
+              f"gain_nav={gain_nav:.1f}x  "
+              f"{'capped by L/2' if capped else 'clash-limited'}  "
+              f"straight-through clearance={slide:+.3f} nm")
 
     with open("results/validation.json", "w") as f:
         json.dump(out, f, indent=2)

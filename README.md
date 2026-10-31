@@ -11,10 +11,29 @@ problem and solves it on atomistically measured channel geometry.
 
 **Key result.** Across four canonical biological nanopores (α-hemolysin, VDAC1,
 connexin-26, MspA) the optimal transporter is not a sphere but a slender
-nanorod, carrying **9.3×–19.4×** the cargo of the largest passing sphere — a
-gain confirmed independently by atomistic collision detection, dynamically
-accessible (Brownian dynamics), and scale-invariant up to the mesoscale barriers
-relevant to drug delivery.
+nanorod as long as the channel, carrying **6.6×–13.8×** the cargo of the largest
+passing sphere (α-hemolysin 13.8×, connexin-26 11.4×, VDAC1 7.2×, MspA 6.6×). A
+rod spanning the full channel length fits each lumen and slides straight through
+it without atomic clashes, and the gain is scale-invariant up to the mesoscale
+barriers relevant to drug delivery.
+
+## Correction (31 Oct 2026)
+
+Earlier versions of `validate.py` grew the test rod's half-length on a grid
+that ended at 0.7·L, so "validated" rods could be up to 1.4× the channel length,
+with their ends in bulk solvent where no clash is possible. In all four channels
+the reported navigable length was simply the last grid point, which inflated the
+validated aspect ratios (13.3 / 6.9 / 10.9 / 6.4) and gains (19.4 / 10.0 / 15.9 /
+9.3×, quoted as 9.3–19.4×). The rod half-length is now capped at the channel
+half-length L/2, the same cap used in `optimize.py`, and the rod must lie inside
+the channel span. All four rods reach that cap without clashes, giving aspect
+ratios 9.5 / 4.9 / 7.8 / 4.5 and gains 13.8 / 7.2 / 11.4 / 6.6× (α-hemolysin /
+VDAC1 / connexin-26 / MspA). `results/validation.json`, `results/bd.json`,
+Figures 4–7 and 9, the TOC graphic and the manuscript have been regenerated. The
+Brownian-dynamics sphere-versus-rod barrier comparison turned out to be below the
+resolution of the Monte-Carlo sampling (588 configurations per slice), so the
+manuscript no longer claims that rods incur no barrier penalty; the disc-jamming
+result is unchanged.
 
 ## Repository layout
 

@@ -458,7 +458,7 @@ def fig7():
     ax.axhline(1, color=F.SUBINK, lw=1, ls="--")
     F.style_ax(ax); ax.set_xlabel(r"entropic barrier $\Delta G^{\ddagger}$ ($k_BT$)")
     ax.set_ylabel("capacity gain (x)")
-    ax.set_title("Rod: more cargo, no barrier penalty", fontsize=8.2, color=F.INK)
+    ax.set_title("Capacity gain vs entropic barrier", fontsize=8.2, color=F.INK)
     ax.text(0.97, 0.06, r"circle: sphere $\rightarrow$ square: rod",
             transform=ax.transAxes, ha="right", va="bottom", fontsize=6.4,
             color=F.SUBINK)
@@ -572,7 +572,8 @@ def toc():
                  arrowstyle="-|>", mutation_scale=11, lw=1.4))
     ax.add_patch(FancyBboxPatch((2.32, 0.36), 0.5, 0.16,
                  boxstyle="round,pad=0,rounding_size=0.08", fc=F.ACCENT, ec="none"))
-    ax.text(2.86, 0.95, "up to\n19x cargo", fontsize=8.5, color=F.INK,
+    gmax = max(val[p]["gain_nav"] for p in CH)
+    ax.text(2.86, 0.95, f"up to\n{gmax:.0f}x cargo", fontsize=8.5, color=F.INK,
             fontweight="bold", va="center")
     ax.text(0.08, 1.74, "Moving-sofa shape optimisation\nfor channel transport",
             fontsize=8.2, color=F.INK, fontweight="bold", va="top")
